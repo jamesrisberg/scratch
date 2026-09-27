@@ -1,0 +1,19 @@
+{
+  "id": "xyz.machud.scratch",
+  "name": "Scratch",
+  "socket": "scratch",
+  "panels": [
+    {
+      "id": "pad",
+      "title": "Scratch",
+      "symbol": "note.text",
+      "kind": "hover",
+      "order": 1,
+      "defaultSize": [560, 400],
+      "compactSize": [360, 44],
+      "capabilities": ["acceptsFileDrop", "acceptsTextDrop"],
+      "verbs": ["show", "hide", "toggle", "frame", "mode", "append", "new", "open", "list", "get", "clear", "drop"],
+      "settingsSchema": "settings.json"
+    }
+  ]
+}

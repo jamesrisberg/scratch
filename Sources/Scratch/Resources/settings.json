@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "settings": [
+    {
+      "key": "sidebar.visible",
+      "title": "Show the pad list",
+      "type": "bool",
+      "default": false,
+      "help": "Scratch is one pad you type into; the list of pads beside it is optional (Cmd-Shift-L)."
+    },
+    {
+      "key": "defaultMonospace",
+      "title": "Monospaced font by default",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "autosaveDelay",
+      "title": "Autosave delay (seconds)",
+      "type": "number",
+      "min": 0.1,
+      "max": 10,
+      "step": 0.05,
+      "default": 0.75,
+      "help": "How long after you stop typing a pad is written to disk."
+    },
+    {
+      "key": "inboxPosition",
+      "title": "New inbox entries go",
+      "type": "enum",
+      "options": [
+        {"value": "append", "title": "At the bottom (newest last)"},
+        {"value": "prepend", "title": "At the top (newest first)"}
+      ],
+      "default": "append"
+    },
+    {
+      "key": "inboxShowsPanel",
+      "title": "Show the panel briefly after Paste to Scratch",
+      "type": "bool",
+      "default": true
+    }
+  ]
+}
