@@ -16,25 +16,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let store = PadStore(directory: ScratchEnvironment.padsDirectory)
         model = AppModel(store: store, settingsURL: ScratchEnvironment.settingsURL)
         panel = PanelController(model: model)
-        control = ControlHost(model: model, panel: panel)
-        control.start()
-        setupStatusItem()
-        // While MacHUD runs, its menu hosts this one and the icon hides (HUDKit menu bar consolidation).
-        control.router.menuProvider = { [weak self] in self?.statusItem?.menu }
-        // The menuBar.consumed opt-out lives in <home>/menubar.json, so SCRATCH_HOME isolates it.
-        HUDStatusItemPolicy.attach(statusItem, appID: control.manifest.id, store: .home(ScratchEnvironment.baseDirectory))
-        if ScratchEnvironment.hotKeysEnabled {
-            if HUDHotKeyCenter.shared.register(Self.toggleHotKey, onPress: { [weak self] in self?.panel.toggle() }) == nil {
-                model.show("⌃⌥N is taken by another app; use the menu bar icon", error: true)
-            }
-            if HUDHotKeyCenter.shared.register(Self.pasteHotKey, onPress: { [weak self] in self?.pasteToScratch() }) == nil {
-                model.show("⌃⌥⇧V is taken by another app", error: true)
-            }
-        }
-
         let args = CommandLine.arguments
         func value(_ flag: String) -> String? {
             args.firstIndex(of: flag).flatMap { args.indices.contains($0 + 1) ? args[$0 + 1] : nil }
+        }
+        // A `--snapshot` run only draws: no control socket (a running app owns that name), no
+        // announcement, no hotkey, no menu bar item.
+        let snapshotting = value("--snapshot") != nil
+        control = ControlHost(model: model, panel: panel)
+        if !snapshotting {
+            control.start()
+            setupStatusItem()
+            // While MacHUD runs, its menu hosts this one and the icon hides (HUDKit menu bar consolidation).
+            control.router.menuProvider = { [weak self] in self?.statusItem?.menu }
+            // The menuBar.consumed opt-out lives in <home>/menubar.json, so SCRATCH_HOME isolates it.
+            HUDStatusItemPolicy.attach(statusItem, appID: control.manifest.id, store: .home(ScratchEnvironment.baseDirectory))
+            if ScratchEnvironment.hotKeysEnabled {
+                if HUDHotKeyCenter.shared.register(Self.toggleHotKey, onPress: { [weak self] in self?.panel.toggle() }) == nil {
+                    model.show("⌃⌥N is taken by another app; use the menu bar icon", error: true)
+                }
+                if HUDHotKeyCenter.shared.register(Self.pasteHotKey, onPress: { [weak self] in self?.pasteToScratch() }) == nil {
+                    model.show("⌃⌥⇧V is taken by another app", error: true)
+                }
+            }
         }
         // `--select <id>`: start on that pad (used with --snapshot).
         if let id = value("--select") { model.select(id) }
@@ -55,7 +59,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         model.store.flush()
-        control.stop()
+        control?.stop()
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
