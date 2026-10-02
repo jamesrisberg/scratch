@@ -108,7 +108,7 @@ SCRATCH_SOCKET=scratch-test build/Scratch.app/Contents/Helpers/scratch state
 
 | Flag | Effect |
 |---|---|
-| `--snapshot <path.png>` | show the panel, write a PNG of it after it settles (about 2 s; the glass is a dark stand-in); the app keeps running |
+| `--snapshot <path.png>` | show the panel, write a PNG of it after it settles (about 2 s; the glass is a dark stand-in); the app keeps running; serves no control socket, announces nothing, registers no hotkey and adds no menu bar item, so it never touches a running instance |
 | `--snapshot-mode compact` | with `--snapshot`: picture the compact strip |
 | `--select <id>` | start on that pad |
 | `--search <query>` | start with a sidebar search |
